@@ -8,17 +8,37 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     use HasFactory;
-    public function project(){
+
+    protected $fillable = [
+        'name',
+        'description',
+        'image_path',
+        'status',
+        'priority',
+        'due_date',
+        'assaigned_user_id',
+        'created_by',
+        'updated_by',
+        'project_id',
+    ];
+
+    public function project()
+    {
         return $this->belongsTo(Project::class);
     }
-    public function assignedUser(){
-        return $this->belongsTo(User::class, 'assigned_user_id');
 
+    public function assaignedUser()
+    {
+        return $this->belongsTo(User::class, 'assaigned_user_id');
     }
-    public function createdBy(){
+
+    public function createdBy()
+    {
         return $this->belongsTo(User::class, 'created_by');
     }
-    public function updatedBy(){
+
+    public function updatedBy()
+    {
         return $this->belongsTo(User::class, 'updated_by');
     }
 }

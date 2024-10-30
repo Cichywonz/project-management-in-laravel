@@ -52,6 +52,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
+        $data['email_verified_at'] = time();
         $data['password'] = bcrypt($data['password']);
         User::create($data);
 
@@ -72,7 +73,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+       return inertia('User/Edit', [
+        'user' => new UserCrudResource($user),
+       ]);
     }
 
     /**
@@ -80,7 +83,17 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        $data = $request->validated();
+        $password = $data['password'] ?? null;
+        if($password){
+            $data['password'] = bcrypt($password);
+        }else{
+            unset($data['password']);
+        }
+        $user->update($data);
+        return to_route('user.index')
+            ->with('success', "User \"$user->name\"was updated");
+  
     }
 
     /**
@@ -88,6 +101,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $name = $user->name;
+        $user->delete();
+        return to_route('user.index')->with('sucess', 'User\'$name\'was deleted');
+    
     }
+    
 }
+
